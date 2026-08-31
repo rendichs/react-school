@@ -1,6 +1,6 @@
 const themeConfig = {
   app: {
-    name: "DashSpace React",
+    name: "MORA",
   },
   // layout
   layout: {
@@ -17,18 +17,19 @@ const themeConfig = {
     customizer: false,
   },
   colors: {
-    primary: "#3b82f6",
-    secondary: "#d946ef",
-    danger: "#ef4444",
-    black: "#000",
-    warning: "#eab308",
-    info: "#06b6d4",
-    light: "#425466",
-    success: "#22c55e",
-    chart_grid_light: "#E9EAF0",
+    primary: "#16A34A",
+    secondary: "#166534",
+    danger: "#DC2626",
+    black: "#000000",
+    warning: "#D4A72C",
+    info: "#0891B2",
+    light: "#64748B",
+    success: "#16A34A",
+
+    chart_grid_light: "#E2E8F0",
     chart_grid_dark: "#374151",
-    chart_text_light: "#4b5563",
-    chart_text_dark: "#d1d5db",
+    chart_text_light: "#475569",
+    chart_text_dark: "#CBD5E1",
   },
 };
 

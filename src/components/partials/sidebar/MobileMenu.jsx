@@ -10,8 +10,7 @@ import useMobileMenu from "@/hooks/useMobileMenu";
 import Icon from "@/components/ui/Icon";
 
 // import images
-import MobileLogo from "@/assets/images/logo/logo-c.svg";
-import MobileLogoWhite from "@/assets/images/logo/logo-c-white.svg";
+import MoraIcon from "@/assets/images/logo/mora-icon.png";
 import svgRabitImage from "@/assets/images/svg/rabit.svg";
 const MobileMenu = ({ className = "custom-class" }) => {
   const scrollableNodeRef = useRef();
@@ -38,17 +37,21 @@ const MobileMenu = ({ className = "custom-class" }) => {
         <div className="logo-segment flex justify-between items-center bg-white dark:bg-gray-800 z-[9] h-[85px]  px-4 ">
           <Link to="/dashboard">
             <div className="flex items-center space-x-4">
-              <div className="logo-icon">
-                {!isDark && !isSemiDark ? (
-                  <img src={MobileLogo} alt="" />
-                ) : (
-                  <img src={MobileLogoWhite} alt="" />
-                )}
+              <div className="logo-icon w-[42px] h-[42px] flex-shrink-0">
+                <img
+                  src={MoraIcon}
+                  alt="MORA"
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <div>
+              <div className="leading-tight">
                 <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                  DashSpace
+                  MORA
                 </h1>
+
+                <p className="text-[8px] font-medium tracking-[0.08em] text-gray-400 uppercase">
+                  Madrasah Learning Platform
+                </p>
               </div>
             </div>
           </Link>

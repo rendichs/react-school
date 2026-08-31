@@ -1,46 +1,46 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Icon from "@/components/ui/Icon";
-import useDarkMode from "@/hooks/useDarkMode";
 import useSidebar from "@/hooks/useSidebar";
-import useSemiDark from "@/hooks/useSemiDark";
 
-// import images
-import MobileLogo from "@/assets/images/logo/logo-c.svg";
-import MobileLogoWhite from "@/assets/images/logo/logo-c-white.svg";
+import MoraIcon from "@/assets/images/logo/mora-icon.png";
 
 const SidebarLogo = ({ menuHover }) => {
-  const [isDark] = useDarkMode();
   const [collapsed, setMenuCollapsed] = useSidebar();
-  // semi dark
-  const [isSemiDark] = useSemiDark();
 
   return (
     <div
-      className={` logo-segment flex justify-between items-center bg-white dark:bg-gray-800 z-[9] py-6  px-4  
+      className={`logo-segment flex justify-between items-center bg-white dark:bg-gray-800 z-[9] py-5 px-4
       ${menuHover ? "logo-hovered" : ""}
-       
-      
       `}
     >
       <Link to="/dashboard">
-        <div className="flex items-center space-x-2 rtl:space-x-reverse">
-          <div className="logo-icon h-[40px]">
-            {!isDark && !isSemiDark ? (
-              <img src={MobileLogo} alt="" className=" h-full" />
-            ) : (
-              <img src={MobileLogoWhite} alt="" className=" h-full" />
-            )}
+        <div className="flex items-center space-x-3 rtl:space-x-reverse">
+          
+          {/* MORA ICON */}
+          <div className="logo-icon w-[48px] h-[48px] flex-shrink-0">
+            <img
+              src={MoraIcon}
+              alt="MORA"
+              className="w-full h-full object-contain"
+            />
           </div>
 
+          {/* MORA BRAND */}
           {(!collapsed || menuHover) && (
-            <div>
-              <h1 className="text-[22px] font-medium  ">DashSpace</h1>
+            <div className="leading-tight">
+              <h1 className="text-[22px] font-semibold tracking-tight text-gray-900 dark:text-white">
+                MORA
+              </h1>
+
+              <p className="mt-[2px] text-[8px] font-medium tracking-[0.08em] text-gray-400 dark:text-gray-400 uppercase whitespace-nowrap">
+                Madrasah Learning Platform
+              </p>
             </div>
           )}
         </div>
       </Link>
 
+      {/* Collapse Button */}
       {(!collapsed || menuHover) && (
         <div
           onClick={() => setMenuCollapsed(!collapsed)}

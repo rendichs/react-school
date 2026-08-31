@@ -40,7 +40,7 @@ const Navmenu = ({ menus }) => {
         }
       }
     });
-    document.title = `DashSpace  | ${locationName}`;
+    document.title = `MORA | ${locationName}`;
 
     setActiveSubmenu(submenuIndex);
     if (mobileMenu) {

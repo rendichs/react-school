@@ -1,3 +1,5 @@
+import { api } from "@/services/api";
+import { authService } from "@/services/auth";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -13,12 +15,14 @@ import SchoolImage from "@/assets/images/school/man2-pontianak.webp";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-
+  
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     username: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -29,16 +33,30 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Sementara hanya UI.
-    // Nanti bagian ini kita hubungkan ke Django API.
-    console.log("Login:", form);
+    setError("");
+    setLoading(true);
 
-    // Untuk testing UI saja.
-    // HAPUS/ubah ketika authentication Django sudah dibuat.
-    navigate("/dashboard");
+    try {
+      const data = await api.login(
+        form.username,
+        form.password
+      );
+
+      authService.save(data);
+
+      navigate("/dashboard", {
+        replace: true,
+      });
+    } catch (error) {
+      setError(
+        error.message || "Login gagal. Silakan coba lagi."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -97,6 +115,12 @@ const LoginPage = () => {
               Masuk untuk mengakses akun Anda
             </p>
           </div>
+
+          {error && (
+            <div className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             {/* USERNAME */}
@@ -185,9 +209,9 @@ const LoginPage = () => {
             {/* LOGIN */}
             <button
               type="submit"
-              className="flex h-12 w-full items-center justify-center rounded-lg bg-green-600 text-sm font-semibold text-white shadow-lg shadow-green-600/20 transition hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-200"
-            >
-              Masuk
+              disabled={loading}
+              className="flex h-12 w-full items-center justify-center rounded-lg bg-green-600 text-sm font-semibold text-white shadow-lg shadow-green-600/20 transition hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-200 disabled:cursor-not-allowed disabled:opacity-70">
+              {loading ? "Memproses..." : "Masuk"}
             </button>
 
             {/* DIVIDER */}

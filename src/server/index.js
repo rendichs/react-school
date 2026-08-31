@@ -17,6 +17,7 @@ const previousDay = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
 const dayBeforePreviousDay = new Date(
   new Date().getTime() - 24 * 60 * 60 * 1000 * 2
 );
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 createServer({
   models: {
@@ -190,6 +191,7 @@ createServer({
     contactServerConfig(this);
     calendarServerConfig(this);
     this.timing = 500;
-    //this.passthrough();
+
+    this.passthrough(`${API_BASE_URL}/**`);
   },
 });

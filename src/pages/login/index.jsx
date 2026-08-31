@@ -1,5 +1,6 @@
 import { api } from "@/services/api";
 import { authService } from "@/services/auth";
+import { useAuth } from "@/context/AuthContext";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -10,12 +11,14 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
+
 import MoraIcon from "@/assets/images/logo/mora-icon.png";
 import SchoolImage from "@/assets/images/school/man2-pontianak.webp";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     username: "",
@@ -45,14 +48,15 @@ const LoginPage = () => {
         form.password
       );
 
-      authService.save(data);
+      login(data);
 
       navigate("/dashboard", {
         replace: true,
       });
     } catch (error) {
       setError(
-        error.message || "Login gagal. Silakan coba lagi."
+        error.message ||
+          "Login gagal. Silakan coba lagi."
       );
     } finally {
       setLoading(false);

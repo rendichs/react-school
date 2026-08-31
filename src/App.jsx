@@ -1,8 +1,9 @@
 import React, { lazy, Suspense } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import Layout from "./layout/Layout";
 import Loading from "@/components/Loading";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 const LandingPage = lazy(() => import("./pages/landing"));
 const LoginPage = lazy(() => import("./pages/login"));
@@ -16,12 +17,13 @@ function App() {
         <Routes>
           {/* PUBLIC */}
           <Route path="/" element={<LandingPage />} />
-
           <Route path="/login" element={<LoginPage />} />
 
-          {/* APPLICATION */}
-          <Route path="/dashboard" element={<Layout />}>
-            <Route index element={<Dashboard />} />
+          {/* PROTECTED */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Layout />}>
+              <Route index element={<Dashboard />} />
+            </Route>
           </Route>
 
           {/* 404 */}

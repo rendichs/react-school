@@ -10,12 +10,15 @@ import { Provider } from "react-redux";
 import store from "./store";
 import "react-toastify/dist/ReactToastify.css";
 import "./server";
+import { AuthProvider } from "./context/AuthContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
     <BrowserRouter>
       <Provider store={store}>
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </Provider>
     </BrowserRouter>
   </>

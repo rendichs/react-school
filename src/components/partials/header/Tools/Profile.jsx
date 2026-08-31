@@ -4,6 +4,7 @@ import Icon from "@/components/ui/Icon";
 import Button from "@/components/ui/Button";
 import { Menu, Transition } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "@/store/api/auth/authSlice";
 import clsx from "clsx";
@@ -26,9 +27,12 @@ const ProfileLabel = ({ sticky }) => {
   );
 };
 
+
 const Profile = ({ sticky }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { logout } = useAuth();
+
 
   const ProfileMenu = [
     {
@@ -66,9 +70,11 @@ const Profile = ({ sticky }) => {
   ];
 
   const handleLogout = () => {
-    // Clear user data from local storage
-    localStorage.removeItem("user");
-    dispatch(logOut());
+    logout();
+
+    navigate("/login", {
+      replace: true,
+    });
   };
   return (
     <Dropdown

@@ -1,6 +1,6 @@
 const AUTH_KEY = "mora_auth";
 
-export const authService = {
+const authService = {
   save(authData) {
     localStorage.setItem(AUTH_KEY, JSON.stringify(authData));
   },
@@ -14,22 +14,26 @@ export const authService = {
 
     try {
       return JSON.parse(data);
-    } catch {
+    } catch (error) {
+      console.error("Invalid auth data:", error);
       localStorage.removeItem(AUTH_KEY);
       return null;
     }
   },
 
   getToken() {
-    const auth = this.get();
-    return auth?.token || null;
+    return this.get()?.token || null;
   },
 
   isAuthenticated() {
-    return !!this.getToken();
+    return Boolean(this.getToken());
   },
 
   logout() {
     localStorage.removeItem(AUTH_KEY);
   },
 };
+
+export { authService };
+
+export default authService;

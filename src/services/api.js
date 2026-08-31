@@ -1,28 +1,91 @@
 import API_BASE_URL from "@/config/api";
+import authService from "@/services/auth";
+
+const request = async (endpoint, options = {}) => {
+  const token = authService.getToken();
+
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+  };
+
+  if (token) {
+    headers.Authorization = `Token ${token}`;
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}${endpoint}`,
+    {
+      ...options,
+      headers,
+    }
+  );
+
+  let data = null;
+
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  if (!response.ok) {
+    const error = new Error(
+      data?.detail ||
+        data?.non_field_errors?.[0] ||
+        "Terjadi kesalahan pada server."
+    );
+
+    error.status = response.status;
+    error.data = data;
+
+    throw error;
+  }
+
+  return data;
+};
 
 export const api = {
-  async login(username, password) {
-    const response = await fetch(`${API_BASE_URL}/login/`, {
+  login: async (username, password) => {
+    return request("/login/", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({
         username,
         password,
       }),
     });
+  },
 
-    const data = await response.json();
+  get: (endpoint) => {
+    return request(endpoint, {
+      method: "GET",
+    });
+  },
 
-    if (!response.ok) {
-      throw new Error(
-        data?.non_field_errors?.[0] ||
-          data?.detail ||
-          "Username atau password salah."
-      );
-    }
+  post: (endpoint, body) => {
+    return request(endpoint, {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  },
 
-    return data;
+  put: (endpoint, body) => {
+    return request(endpoint, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    });
+  },
+
+  patch: (endpoint, body) => {
+    return request(endpoint, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    });
+  },
+
+  delete: (endpoint) => {
+    return request(endpoint, {
+      method: "DELETE",
+    });
   },
 };

@@ -49,10 +49,10 @@ const LoginPage = () => {
       }}
     >
       {/* Green overlay */}
-      <div className="absolute inset-0 bg-[#064E3B]/80" />
+      <div className="absolute inset-0 bg-[#064E3B]/45" />
 
       {/* Subtle green gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-green-950/90 via-green-800/65 to-emerald-950/80" />
+      <div className="absolute inset-0 bg-gradient-to-br from-green-950/90 via-green-800/65 to-emerald-950/50" />
 
       {/* Background decoration */}
       <div className="absolute -left-32 top-20 h-72 w-72 rounded-full bg-green-300/10 blur-3xl" />
@@ -76,7 +76,7 @@ const LoginPage = () => {
             className="h-20 w-20 object-contain drop-shadow-lg"
           />
 
-          <h1 className="mt-3 text-3xl font-bold tracking-tight">
+          <h1 className="mt-3 text-3xl font-bold tracking-tight text-white drop-shadow-lg">
             MORA
           </h1>
 

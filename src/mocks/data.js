@@ -1,14 +1,24 @@
 export const menuItems = [
   {
     isHeadr: true,
-    title: "menu",
+    title: "MENU",
   },
 
   {
-    title: "Blank Page",
+    title: "Dashboard",
     icon: "ph:house",
-    isHide: true,
     link: "dashboard",
+  },
+
+  {
+    isHeadr: true,
+    title: "MASTER DATA",
+  },
+
+  {
+    title: "Guru",
+    icon: "ph:chalkboard-teacher",
+    link: "admin/guru",
   },
 ];
 

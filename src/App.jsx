@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 const LandingPage = lazy(() => import("./pages/landing"));
 const LoginPage = lazy(() => import("./pages/login"));
 const Dashboard = lazy(() => import("./pages/dashboard"));
+const GuruPage = lazy(() => import("./pages/admin/guru"));
 const Error = lazy(() => import("./pages/404"));
 
 function App() {
@@ -21,8 +22,9 @@ function App() {
 
           {/* PROTECTED */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Layout />}>
-              <Route index element={<Dashboard />} />
+            <Route element={<Layout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin/guru" element={<GuruPage />} />
             </Route>
           </Route>
 

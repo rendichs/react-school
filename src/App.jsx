@@ -1,22 +1,33 @@
 import React, { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-// home pages  & dashboard
-//import Dashboard from "./pages/dashboard";
-const Dashboard = lazy(() => import("./pages/dashboard"));
-
-const Error = lazy(() => import("./pages/404"));
-
 import Layout from "./layout/Layout";
 import Loading from "@/components/Loading";
+
+const LandingPage = lazy(() => import("./pages/landing"));
+const LoginPage = lazy(() => import("./pages/login"));
+const Dashboard = lazy(() => import("./pages/dashboard"));
+const Error = lazy(() => import("./pages/404"));
+
 function App() {
   return (
-    <main className="App  relative">
-      <Routes>
-        <Route path="/*" element={<Layout />}>
-          <Route path="dashboard" element={<Dashboard />} />
-        </Route>
-      </Routes>
+    <main className="App relative">
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          {/* PUBLIC */}
+          <Route path="/" element={<LandingPage />} />
+
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* APPLICATION */}
+          <Route path="/dashboard" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+          </Route>
+
+          {/* 404 */}
+          <Route path="*" element={<Error />} />
+        </Routes>
+      </Suspense>
     </main>
   );
 }

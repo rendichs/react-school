@@ -13,8 +13,12 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { getDashboardByRole } from "@/utils/authRedirect";
 
 import MoraIcon from "@/assets/images/logo/mora-icon.png";
+
 
 const features = [
   {
@@ -73,6 +77,13 @@ const statistics = [
 const LandingPage = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleDashboard = () => {
+    navigate(getDashboardByRole(user?.role));
+  };
+
   return (
     <div className="min-h-screen bg-white text-slate-800">
       {/* NAVBAR */}
@@ -127,12 +138,28 @@ const LandingPage = () => {
           </nav>
 
           <div className="hidden md:block">
-            <Link
-              to="/login"
-              className="inline-flex items-center rounded-lg bg-green-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700"
-            >
-              Masuk
-            </Link>
+            {isAuthenticated ? (
+              <button
+                type="button"
+                onClick={handleDashboard}
+                className="flex items-center gap-3"
+                title="Dashboard"
+              >
+                <img
+                  src={user?.avatar || "/src/assets/images/avatar/avatar.jpg"}
+                  alt="Profil"
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="inline-flex items-center rounded-lg bg-green-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700"
+              >
+                Masuk
+              </Link>
+            )}
+            
           </div>
 
           {/* Mobile button */}

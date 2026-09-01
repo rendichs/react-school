@@ -1,6 +1,8 @@
 import { api } from "@/services/api";
 import { authService } from "@/services/auth";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { getDashboardByRole } from "@/utils/authRedirect";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -12,11 +14,25 @@ import {
 } from "lucide-react";
 
 
+
+
 import MoraIcon from "@/assets/images/logo/mora-icon.png";
 import SchoolImage from "@/assets/images/school/man2-pontianak.webp";
 
+
 const LoginPage = () => {
   const navigate = useNavigate();
+
+  const { isAuthenticated, user } = useAuth();
+
+  if (isAuthenticated) {
+    return (
+      <Navigate
+        to={getDashboardByRole(user?.role)}
+        replace
+      />
+    );
+  }
   
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -50,9 +66,10 @@ const LoginPage = () => {
 
       login(data);
 
-      navigate("/dashboard", {
+      navigate(getDashboardByRole(data.role), {
         replace: true,
       });
+
     } catch (error) {
       setError(
         error.message ||

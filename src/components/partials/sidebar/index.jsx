@@ -7,9 +7,13 @@ import useSidebar from "@/hooks/useSidebar";
 import useSemiDark from "@/hooks/useSemiDark";
 import svgRabitImage from "@/assets/images/svg/rabit.svg";
 import clsx from "clsx";
+import { useAuth } from "@/context/AuthContext";
+
+
 const Sidebar = () => {
   const scrollableNodeRef = useRef();
   const [scroll, setScroll] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,7 +61,7 @@ const Sidebar = () => {
           className="sidebar-menu  h-[calc(100%-80px)]"
           scrollableNodeProps={{ ref: scrollableNodeRef }}
         >
-          <Navmenu menus={menuItems} />
+          <Navmenu menus={menuItems[user?.role] || []} />
         </SimpleBar>
       </div>
     </div>

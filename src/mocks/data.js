@@ -1,26 +1,68 @@
-export const menuItems = [
-  {
-    isHeadr: true,
-    title: "MENU",
-  },
+export const menuItems = {
+  admin: [
+    {
+      isHeadr: true,
+      title: "MENU",
+    },
 
-  {
-    title: "Dashboard",
-    icon: "ph:house",
-    link: "dashboard",
-  },
+    {
+      title: "Dashboard",
+      icon: "ph:house",
+      link: "dashboard",
+    },
 
-  {
-    isHeadr: true,
-    title: "MASTER DATA",
-  },
+    {
+      isHeadr: true,
+      title: "MASTER DATA",
+    },
 
-  {
-    title: "Guru",
-    icon: "ph:chalkboard-teacher",
-    link: "admin/guru",
-  },
-];
+    {
+      title: "User",
+      icon: "ph:book",
+      child: [
+        {
+          childtitle: "Admin",
+          childlink: "/admin/users/admin",
+        },
+        {
+          childtitle: "Guru",
+          childlink: "/admin/users/guru",
+        },
+        {
+          childtitle: "Murid",
+          childlink: "/admin/users/murid",
+        },
+      ],
+    },
+
+    {
+      title: "Kelas",
+      icon: "ph:chalkboard",
+      link: "admin/kelas",
+    },
+
+    {
+      title: "Mapel",
+      icon: "ph:book-open-text",
+      link: "admin/mapel",
+    },
+  ],
+
+  guru: [
+    {
+      isHeadr: true,
+      title: "MENU",
+    },
+
+    {
+      title: "Dashboard",
+      icon: "ph:house",
+      link: "guru/dashboard",
+    },
+  ],
+
+  murid: [],
+};
 
 export const topMenu = [
   {

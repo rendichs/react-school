@@ -4,7 +4,12 @@ import { NavLink } from "react-router-dom";
 
 const SingleMenu = ({ item }) => {
   return (
-    <NavLink className="menu-link " to={item.link}>
+    <NavLink className="menu-link  border-l-2
+  border-transparent
+  transition-all
+  duration-150
+  hover:border-green-500
+  hover:text-green-600" to={item.link}>
       <span className="menu-icon flex-grow-0">
         <Icon icon={item.icon} />
       </span>

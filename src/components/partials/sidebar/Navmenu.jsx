@@ -9,7 +9,10 @@ import Submenu from "./sub-menu";
 import MenuItem from "./menu-item";
 import SingleMenu from "./single-menu";
 
-const Navmenu = ({ menus }) => {
+const Navmenu = ({ menus = [] }) => {
+  console.log("Sidebar menus:", menus);
+  console.log("Is array:", Array.isArray(menus));
+  const menuList = Array.isArray(menus) ? menus : [];
   const [activeSubmenu, setActiveSubmenu] = useState(null);
 
   const toggleSubmenu = (i) => {
@@ -27,7 +30,7 @@ const Navmenu = ({ menus }) => {
 
   useEffect(() => {
     let submenuIndex = null;
-    menus.map((item, i) => {
+    menuList.map((item, i) => {
       if (!item.child) return;
       if (item.link === locationName) {
         submenuIndex = null;
@@ -51,7 +54,7 @@ const Navmenu = ({ menus }) => {
   return (
     <>
       <ul>
-        {menus.map((item, i) => (
+        {menuList.map((item, i) => (
           <li
             key={i}
             className={` single-menu-item 

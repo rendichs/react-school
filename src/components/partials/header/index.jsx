@@ -9,8 +9,6 @@ import Logo from "./Tools/Logo";
 import SearchBox from "./Tools/SearchBox";
 import Profile from "./Tools/Profile";
 import Notification from "./Tools/Notification";
-import Message from "./Tools/Message";
-import Language from "./Tools/Language";
 import useRtl from "@/hooks/useRtl";
 import useMobileMenu from "@/hooks/useMobileMenu";
 import Settings from "./Tools/Settings";
@@ -86,10 +84,8 @@ const Header = ({ className = "custom-class", title }) => {
           ) : null}
           {/* Nav Tools  */}
           <div className="nav-tools flex items-center lg:space-x-6 space-x-3 rtl:space-x-reverse">
-            <Language />
             <SwitchDark />
             <Settings />
-            <Message />
             <Notification />
             <Profile sticky={sticky} />
 

@@ -22,15 +22,15 @@ export const menuItems = {
       child: [
         {
           childtitle: "Admin",
-          childlink: "/admin/users/admin",
+          childlink: "/admin/users-admin",
         },
         {
           childtitle: "Guru",
-          childlink: "/admin/users/guru",
+          childlink: "/admin/users-guru",
         },
         {
           childtitle: "Murid",
-          childlink: "/admin/users/murid",
+          childlink: "/admin/users-murid",
         },
       ],
     },

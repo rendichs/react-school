@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Icon from "@/components/ui/Icon";
+import { Eye, EyeOff } from "lucide-react";
+
+import Modal from "@/components/ui/Modal";
 
 const EditGuruModal = ({
   isOpen,
@@ -19,8 +21,12 @@ const EditGuruModal = ({
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
   useEffect(() => {
-    if (!teacher) return;
+    if (!teacher) {
+      return;
+    }
 
     setForm({
       username: teacher.username || "",
@@ -32,6 +38,8 @@ const EditGuruModal = ({
       alamat: teacher.alamat || "",
       password: "",
     });
+
+    setShowPassword(false);
   }, [teacher]);
 
   if (!isOpen || !teacher) {
@@ -53,208 +61,258 @@ const EditGuruModal = ({
     onSave(form);
   };
 
+  const handleClose = () => {
+    if (loading) {
+      return;
+    }
+
+    onClose();
+  };
+
+  const footerContent = (
+    <>
+      <button
+        type="button"
+        onClick={handleClose}
+        disabled={loading}
+        className="btn btn-light"
+      >
+        Batal
+      </button>
+
+      <button
+        type="submit"
+        form="edit-teacher-form"
+        disabled={loading}
+        className="btn btn-success"
+      >
+        {loading ? "Menyimpan..." : "Simpan Perubahan"}
+      </button>
+    </>
+  );
+
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-2xl overflow-hidden rounded-xl bg-white shadow-xl">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4">
-          <div>
-            <h2 className="text-lg font-semibold text-slate-800">
-              Edit Guru
-            </h2>
+    <Modal
+      activeModal={isOpen}
+      onClose={handleClose}
+      enterFrom="scale-90 translate-y-5"
+      leaveFrom="scale-100 translate-y-0"
+      className="max-w-2xl"
+      title="Edit Guru"
+      footerContent={footerContent}
+    >
+      <form
+        id="edit-teacher-form"
+        onSubmit={handleSubmit}
+      >
+        <div className="space-y-5">
 
-            <p className="mt-1 text-sm text-slate-500">
-              Perbarui informasi akun guru
-            </p>
-          </div>
+          {/* Informasi Akun */}
+          <section>
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">
+                Informasi Akun
+              </h3>
 
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={loading}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-red-500"
-          >
-            <Icon icon="ph:x" width="20" height="20" />
-          </button>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
-          <div className="max-h-[70vh] space-y-4 overflow-y-auto p-6">
-
-            {/* Nama */}
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Nama Lengkap
-              </label>
-
-              <input
-                type="text"
-                name="nama_lengkap"
-                value={form.nama_lengkap}
-                onChange={handleChange}
-                required
-                className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
-              />
+              <p className="mt-1 text-xs text-slate-400">
+                Perbarui informasi akun guru.
+              </p>
             </div>
 
-            {/* Username */}
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Username
-              </label>
+            <div className="grid gap-4 md:grid-cols-2">
 
-              <input
-                type="text"
+              {/* Username */}
+              <FormInput
+                label="Username"
                 name="username"
                 value={form.username}
                 onChange={handleChange}
                 required
-                className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
               />
-            </div>
 
-            {/* Email */}
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Email
-              </label>
-
-              <input
-                type="email"
+              {/* Email */}
+              <FormInput
+                label="Email"
                 name="email"
+                type="email"
                 value={form.email}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
               />
+
+            </div>
+          </section>
+
+          {/* Data Guru */}
+          <section>
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">
+                Data Guru
+              </h3>
+
+              <p className="mt-1 text-xs text-slate-400">
+                Perbarui informasi profil guru.
+              </p>
             </div>
 
-            {/* NIP */}
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                NIP
-              </label>
+            <div className="grid gap-4 md:grid-cols-2">
 
-              <input
-                type="text"
+              {/* Nama */}
+              <FormInput
+                label="Nama Lengkap"
+                name="nama_lengkap"
+                value={form.nama_lengkap}
+                onChange={handleChange}
+                required
+              />
+
+              {/* NIP */}
+              <FormInput
+                label="NIP"
                 name="nip"
                 value={form.nip}
                 onChange={handleChange}
                 required
-                className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
               />
-            </div>
 
-            {/* Jenis Kelamin */}
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Jenis Kelamin
-              </label>
+              {/* Jenis Kelamin */}
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                  Jenis Kelamin
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
 
-              <select
-                name="jantina"
-                value={form.jantina}
-                onChange={handleChange}
-                required
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
-              >
-                <option value="">
-                  Pilih jenis kelamin
-                </option>
+                <select
+                  name="jantina"
+                  value={form.jantina}
+                  onChange={handleChange}
+                  required
+                  className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 text-sm text-slate-700 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                >
+                  <option value="">
+                    Pilih jenis kelamin
+                  </option>
 
-                <option value="Lelaki">
-                  Laki-laki
-                </option>
+                  <option value="Lelaki">
+                    Lelaki
+                  </option>
 
-                <option value="Perempuan">
-                  Perempuan
-                </option>
-              </select>
-            </div>
+                  <option value="Perempuan">
+                    Perempuan
+                  </option>
+                </select>
+              </div>
 
-            {/* No Telepon */}
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                No. Telepon
-              </label>
-
-              <input
-                type="text"
+              {/* Telepon */}
+              <FormInput
+                label="No. Telepon"
                 name="no_telefon"
                 value={form.no_telefon}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                placeholder="08xxxxxxxxxx"
               />
+
+              {/* Alamat */}
+              <div className="md:col-span-2">
+                <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                  Alamat
+                </label>
+
+                <textarea
+                  name="alamat"
+                  value={form.alamat}
+                  onChange={handleChange}
+                  rows={3}
+                  placeholder="Alamat lengkap guru"
+                  className="w-full resize-none rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                />
+              </div>
+
+            </div>
+          </section>
+
+          {/* Password */}
+          <section>
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">
+                Password
+              </h3>
+
+              <p className="mt-1 text-xs text-slate-400">
+                Kosongkan jika password tidak ingin diubah.
+              </p>
             </div>
 
-            {/* Alamat */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Alamat
-              </label>
-
-              <textarea
-                name="alamat"
-                value={form.alamat}
-                onChange={handleChange}
-                rows={3}
-                className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
-              />
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200">
                 Password Baru
               </label>
 
-              <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                minLength={8}
-                placeholder="Kosongkan jika tidak ingin mengubah"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  minLength={8}
+                  placeholder="Minimal 8 karakter"
+                  className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 pr-11 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                />
 
-              <p className="mt-1 text-xs text-slate-400">
-                Minimal 8 karakter. Kosongkan jika password tidak ingin diubah.
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword((value) => !value)
+                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+
+              <p className="mt-1.5 text-xs text-slate-400">
+                Minimal 8 karakter. Kosongkan jika tidak ingin mengubah password.
               </p>
             </div>
-          </div>
+          </section>
 
-          {/* Footer */}
-          <div className="flex justify-end gap-3 border-t bg-slate-50 px-6 py-4">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={loading}
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Batal
-            </button>
+        </div>
+      </form>
+    </Modal>
+  );
+};
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {loading && (
-                <Icon
-                  icon="ph:spinner"
-                  width="18"
-                  height="18"
-                  className="animate-spin"
-                />
-              )}
+const FormInput = ({
+  label,
+  name,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+  required = false,
+}) => {
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200">
+        {label}
 
-              {loading ? "Menyimpan..." : "Simpan Perubahan"}
-            </button>
-          </div>
-        </form>
-      </div>
+        {required && (
+          <span className="ml-1 text-red-500">*</span>
+        )}
+      </label>
+
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+      />
     </div>
   );
 };

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "@/components/ui/Icon";
+import Modal from "@/components/ui/Modal";
 
 const ModalDelete = ({
   isOpen,
@@ -8,96 +9,167 @@ const ModalDelete = ({
   onConfirm,
   loading = false,
 }) => {
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (isOpen) {
+      setError("");
+    }
+  }, [isOpen, teacher]);
+
   if (!isOpen || !teacher) {
     return null;
   }
 
+  const handleClose = () => {
+    if (loading) {
+      return;
+    }
+
+    setError("");
+    onClose();
+  };
+
+  const handleConfirm = async () => {
+    if (loading) {
+      return;
+    }
+
+    setError("");
+
+    try {
+      await onConfirm();
+    } catch (error) {
+      console.error(
+        "Gagal menghapus guru:",
+        error
+      );
+
+      const message =
+        error?.data?.detail ||
+        error?.message ||
+        "Guru tidak dapat dihapus.";
+
+      setError(message);
+    }
+  };
+
+  const footerContent = (
+    <>
+      <button
+        type="button"
+        onClick={handleClose}
+        disabled={loading}
+        className="btn btn-light"
+      >
+        Batal
+      </button>
+
+      <button
+        type="button"
+        onClick={handleConfirm}
+        disabled={loading}
+        className="btn btn-danger inline-flex items-center gap-2"
+      >
+        {loading && (
+          <Icon
+            icon="ph:spinner"
+            width="18"
+            height="18"
+            className="animate-spin"
+          />
+        )}
+
+        {loading
+          ? "Menghapus..."
+          : "Hapus Guru"}
+      </button>
+    </>
+  );
+
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md overflow-hidden rounded-xl bg-white shadow-xl dark:bg-slate-800">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-700">
-          <h2 className="text-lg font-semibold text-slate-800 dark:text-white">
-            Hapus Guru
-          </h2>
+    <Modal
+      activeModal={isOpen}
+      onClose={handleClose}
+      enterFrom="scale-90 translate-y-5"
+      leaveFrom="scale-100 translate-y-0"
+      className="max-w-md"
+      title="Hapus Guru"
+      footerContent={footerContent}
+    >
+      <div className="py-2">
 
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={loading}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-red-500 dark:hover:bg-slate-700"
-          >
+        {/* Icon */}
+        <div className="mb-5 flex justify-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">
             <Icon
-              icon="ph:x"
-              width="20"
-              height="20"
+              icon="ph:trash"
+              width="26"
+              height="26"
             />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="px-6 py-6">
-          <div className="flex items-start gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
-              <Icon
-                icon="ph:trash"
-                width="22"
-                height="22"
-              />
-            </div>
-
-            <div>
-              <h3 className="text-base font-semibold text-slate-800 dark:text-white">
-                Hapus akun guru?
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
-                Anda yakin ingin menghapus akun{" "}
-                <span className="font-semibold text-slate-700 dark:text-slate-200">
-                  {teacher.nama_lengkap}
-                </span>
-                ?
-              </p>
-
-              <p className="mt-2 text-xs leading-5 text-red-500">
-                Tindakan ini tidak dapat dibatalkan.
-              </p>
-            </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4 dark:border-slate-700 dark:bg-slate-700/30">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={loading}
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
-          >
-            Batal
-          </button>
+        {/* Message */}
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
+            Hapus akun guru?
+          </h3>
 
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={loading}
-            className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {loading && (
-              <Icon
-                icon="ph:spinner"
-                width="18"
-                height="18"
-                className="animate-spin"
-              />
-            )}
+          <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500 dark:text-slate-400">
+            Anda yakin ingin menghapus akun guru{" "}
+            <span className="font-semibold text-slate-700 dark:text-slate-200">
+              {teacher.nama_lengkap}
+            </span>
+            ?
+          </p>
 
-            {loading ? "Menghapus..." : "Hapus Guru"}
-          </button>
+          {/* Firewall Error */}
+          {error && (
+            <div className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-left dark:border-red-900/40 dark:bg-red-900/20">
+              <div className="flex items-start gap-3">
+
+                <Icon
+                  icon="ph:warning-circle"
+                  width="20"
+                  height="20"
+                  className="mt-0.5 shrink-0 text-red-500"
+                />
+
+                <div>
+                  <p className="text-sm font-semibold text-red-700 dark:text-red-400">
+                    Guru tidak dapat dihapus
+                  </p>
+
+                  <p className="mt-1 text-sm leading-5 text-red-600 dark:text-red-400">
+                    {error}
+                  </p>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          {/* Warning normal */}
+          {!error && (
+            <div className="mt-5 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+              <div className="flex items-center justify-center gap-2">
+                <Icon
+                  icon="ph:warning"
+                  width="18"
+                  height="18"
+                />
+
+                <span>
+                  Tindakan ini tidak dapat dibatalkan.
+                </span>
+              </div>
+            </div>
+          )}
         </div>
+
       </div>
-    </div>
+    </Modal>
   );
 };
 

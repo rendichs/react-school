@@ -31,7 +31,7 @@ function App() {
             <Route element={<RoleRoute allowedRoles={["admin"]} />}>
               <Route element={<Layout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/admin/guru" element={<GuruPage />} />
+                <Route path="/admin/users-guru" element={<GuruPage />} />
               </Route>
             </Route>
 

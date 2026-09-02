@@ -8,8 +8,9 @@ import {
   User,
 } from "lucide-react";
 
-import TeacherFormModal from "./ModalCreate";
-import EditGuruModal from "./ModalEdit";
+import ModalCreate from "./ModalCreate";
+import ModalEdit from "./ModalEdit";
+import ModalDelete from "./ModalDelete";
 import { api } from "@/services/api";
 import Icon from "@/components/ui/Icon"; 
 import StatusToast from "@/components/ui/StatusToast";
@@ -21,12 +22,15 @@ const GuruPage = () => {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
 
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  // const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const [showEditModal, setShowEditModal] = useState(false);
+  // const [showEditModal, setShowEditModal] = useState(false);
+  const [activeModal, setActiveModal] = useState(null);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
-
   const [saving, setSaving] = useState(false);
+
+  // const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const { showToast } = useToast();
 
@@ -105,7 +109,7 @@ const GuruPage = () => {
 
   const handleEdit = (teacher) => {
     setSelectedTeacher(teacher);
-    setShowEditModal(true);
+    setActiveModal("edit");
   };
 
   useEffect(() => {
@@ -161,7 +165,7 @@ const GuruPage = () => {
         )
       );
 
-      setShowEditModal(false);
+      setActiveModal(null);
       setSelectedTeacher(null);
 
       showToast({
@@ -184,34 +188,53 @@ const GuruPage = () => {
     }
   };
 
-  const handleDelete = async (teacher) => {
-    const confirmed = window.confirm(
-      `Hapus akun ${teacher.nama_lengkap}?`
-    );
+  const handleDelete = (teacher) => {
+    setSelectedTeacher(teacher);
+    setActiveModal("delete");
+  };
 
-    if (!confirmed) {
-      return;
-    }
+  const handleConfirmDelete = async () => {
+    if (!selectedTeacher) return;
+
+    setDeleting(true);
 
     try {
       await api.delete(
-        `/teachers/${teacher.id}/`
+        `/teachers/${selectedTeacher.id}/`
       );
 
       setTeachers((current) =>
         current.filter(
-          (item) => item.id !== teacher.id
+          (teacher) =>
+            teacher.id !== selectedTeacher.id
         )
       );
 
+      showToast({
+        type: "success",
+        title: "Guru Dihapus",
+        message: `Akun ${selectedTeacher.nama_lengkap} berhasil dihapus.`,
+      });
+
+      setActiveModal(null);
+      setSelectedTeacher(null);
+
     } catch (error) {
-      console.error(error);
+      console.error(
+        "Gagal menghapus guru:",
+        error
+      );
 
       showToast({
         type: "error",
-        title: "Gagal Menghapus Guru",
-        message: `Gagal menghapus guru ${teacher.nama_lengkap}.`,
+        title: "Gagal Menghapus",
+        message:
+          error?.message ||
+          "Gagal menghapus akun guru.",
       });
+
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -232,7 +255,7 @@ const GuruPage = () => {
 
         <button
             type="button"
-            onClick={() => setShowCreateModal(true)}
+            onClick={() => setActiveModal("create")}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700"
             >
             <Plus size={18} />
@@ -433,21 +456,34 @@ const GuruPage = () => {
         </div>
       </div>
 
-      <TeacherFormModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
+      <ModalCreate
+        isOpen={activeModal === "create"}
+        onClose={() => setActiveModal(null)}
         onSuccess={loadTeachers}
       />
 
-      <EditGuruModal
-        isOpen={showEditModal}
+      <ModalEdit
+        isOpen={activeModal === "edit"}
         teacher={selectedTeacher}
         onClose={() => {
-          setShowEditModal(false);
+          setActiveModal(null);
           setSelectedTeacher(null);
         }}
         onSave={handleUpdate}
         loading={saving}
+      />
+
+      <ModalDelete
+        isOpen={activeModal === "delete"}
+        teacher={selectedTeacher}
+        onClose={() => {
+          if (deleting) return;
+
+          setActiveModal(null);
+          setSelectedTeacher(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        loading={deleting}
       />
 
     </div>

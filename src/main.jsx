@@ -11,13 +11,18 @@ import store from "./store";
 import "react-toastify/dist/ReactToastify.css";
 import "./server";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastProvider } from "@/context/ToastContext";
+import StatusToast from "@/components/ui/StatusToast";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
     <BrowserRouter>
       <Provider store={store}>
         <AuthProvider>
-          <App />
+          <ToastProvider>
+            <App />
+            <StatusToast />
+          </ToastProvider>
         </AuthProvider>
       </Provider>
     </BrowserRouter>

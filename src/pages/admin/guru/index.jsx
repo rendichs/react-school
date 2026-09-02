@@ -13,6 +13,7 @@ import EditGuruModal from "./ModalEdit";
 import { api } from "@/services/api";
 import Icon from "@/components/ui/Icon"; 
 import StatusToast from "@/components/ui/StatusToast";
+import { useToast } from "@/context/ToastContext";
 
 const GuruPage = () => {
   const [teachers, setTeachers] = useState([]);
@@ -27,33 +28,7 @@ const GuruPage = () => {
 
   const [saving, setSaving] = useState(false);
 
-  const [toast, setToast] = useState({
-    show: false,
-    type: "success",
-    title: "",
-    message: "",
-  });
-
-  const showToast = ({
-    type = "success",
-    title,
-    message,
-  }) => {
-    setToast({
-      show: true,
-      type,
-      title,
-      message,
-    });
-  };
-
-  const closeToast = () => {
-    setToast((current) => ({
-      ...current,
-      show: false,
-    }));
-  };
-
+  const { showToast } = useToast();
 
   const handleToggleActive = async (teacher) => {
     const newStatus = !teacher.is_active;
@@ -93,12 +68,8 @@ const GuruPage = () => {
           ? `Akun ${teacher.nama_lengkap} sekarang aktif.`
           : `Akun ${teacher.nama_lengkap} sekarang nonaktif.`,
       });
-
     } catch (error) {
-      console.error(
-        "Gagal mengubah status guru:",
-        error
-      );
+      console.error(error);
 
       showToast({
         type: "error",
@@ -198,7 +169,7 @@ const GuruPage = () => {
         title: "Guru Diperbarui",
         message: `Data ${form.nama_lengkap} berhasil diperbarui.`,
       });
-      
+
     } catch (error) {
       console.error("Gagal memperbarui data guru:", error);
 
@@ -246,14 +217,6 @@ const GuruPage = () => {
 
   return (
     <div className="space-y-6">
-
-      <StatusToast
-        show={toast.show}
-        type={toast.type}
-        title={toast.title}
-        message={toast.message}
-        onClose={closeToast}
-      />
 
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

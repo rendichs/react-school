@@ -10,6 +10,7 @@ import {
 
 import TeacherFormModal from "./TeacherFormModal";
 import { api } from "@/services/api";
+import Icon from "@/components/ui/Icon";
 
 const GuruPage = () => {
   const [teachers, setTeachers] = useState([]);
@@ -17,6 +18,44 @@ const GuruPage = () => {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const handleToggleActive = async (teacher) => {
+    const newStatus = !teacher.is_active;
+
+    const confirmMessage = newStatus
+      ? `Aktifkan akun ${teacher.nama_lengkap}?`
+      : `Nonaktifkan akun ${teacher.nama_lengkap}?`;
+
+    const confirmed = window.confirm(confirmMessage);
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const updatedTeacher = await api.patch(
+        `/teachers/${teacher.id}/`,
+        {
+          is_active: newStatus,
+        }
+      );
+
+      setTeachers((currentTeachers) =>
+        currentTeachers.map((item) =>
+          item.id === teacher.id
+            ? updatedTeacher
+            : item
+        )
+      );
+    } catch (error) {
+      console.error("Gagal mengubah status guru:", error);
+
+      alert(
+        error.message ||
+          "Gagal mengubah status akun guru."
+      );
+    }
+  };
 
   const loadTeachers = async () => {
     setLoading(true);
@@ -207,18 +246,26 @@ const GuruPage = () => {
                       {teacher.username}
                     </td>
 
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
+                    <td className="px-4 py-3">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleActive(teacher)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
                           teacher.is_active
-                            ? "bg-green-100 text-green-700"
-                            : "bg-slate-100 text-slate-500"
+                            ? "bg-green-500"
+                            : "bg-slate-300"
                         }`}
                       >
-                        {teacher.is_active
-                          ? "Aktif"
-                          : "Nonaktif"}
-                      </span>
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
+                            teacher.is_active
+                              ? "bg-green-50 text-green-600"
+                              : "bg-red-50 text-red-600"
+                          }`}
+                        >
+                          {teacher.is_active ? "Aktif" : "Nonaktif"}
+                        </span>
+                      </button>
                     </td>
 
                     <td className="px-6 py-4">

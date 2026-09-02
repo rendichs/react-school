@@ -13,13 +13,10 @@ const request = async (endpoint, options = {}) => {
     headers.Authorization = `Token ${token}`;
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}${endpoint}`,
-    {
-      ...options,
-      headers,
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
 
   let data = null;
 
@@ -46,46 +43,40 @@ const request = async (endpoint, options = {}) => {
 };
 
 export const api = {
-  login: async (username, password) => {
-    return request("/login/", {
+  login: async (username, password) =>
+    request("/login/", {
       method: "POST",
       body: JSON.stringify({
         username,
         password,
       }),
-    });
-  },
+    }),
 
-  get: (endpoint) => {
-    return request(endpoint, {
+  get: (endpoint) =>
+    request(endpoint, {
       method: "GET",
-    });
-  },
+    }),
 
-  post: (endpoint, body) => {
-    return request(endpoint, {
+  post: (endpoint, body) =>
+    request(endpoint, {
       method: "POST",
       body: JSON.stringify(body),
-    });
-  },
+    }),
 
-  put: (endpoint, body) => {
-    return request(endpoint, {
+  put: (endpoint, body) =>
+    request(endpoint, {
       method: "PUT",
       body: JSON.stringify(body),
-    });
-  },
+    }),
 
-  patch: (endpoint, body) => {
-    return request(endpoint, {
+  patch: (endpoint, body) =>
+    request(endpoint, {
       method: "PATCH",
       body: JSON.stringify(body),
-    });
-  },
+    }),
 
-  delete: (endpoint) => {
-    return request(endpoint, {
+  delete: (endpoint) =>
+    request(endpoint, {
       method: "DELETE",
-    });
-  },
+    }),
 };

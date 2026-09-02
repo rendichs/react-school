@@ -20,7 +20,7 @@ import MoraIcon from "@/assets/images/logo/mora-icon.png";
 import SchoolImage from "@/assets/images/school/man2-pontianak.webp";
 
 
-const LoginPage = () => {
+const LoginPage = async () => {
   const navigate = useNavigate();
 
   const { isAuthenticated, user } = useAuth();
@@ -32,6 +32,18 @@ const LoginPage = () => {
         replace
       />
     );
+  }
+
+  try {
+    const response = await api.login(username, password);
+
+    login(response);
+
+    navigate(getDashboardByRole(response.role), {
+      replace: true,
+    });
+  } catch (error) {
+    setError(error.message);
   }
   
   const { login } = useAuth();

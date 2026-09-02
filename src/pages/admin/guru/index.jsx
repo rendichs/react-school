@@ -8,16 +8,52 @@ import {
   User,
 } from "lucide-react";
 
-import TeacherFormModal from "./TeacherFormModal";
+import TeacherFormModal from "./ModalCreate";
+import EditGuruModal from "./ModalEdit";
 import { api } from "@/services/api";
-import Icon from "@/components/ui/Icon";
+import Icon from "@/components/ui/Icon"; 
+import StatusToast from "@/components/ui/StatusToast";
 
 const GuruPage = () => {
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
+
+  const [saving, setSaving] = useState(false);
+
+  const [toast, setToast] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    message: "",
+  });
+
+  const showToast = ({
+    type = "success",
+    title,
+    message,
+  }) => {
+    setToast({
+      show: true,
+      type,
+      title,
+      message,
+    });
+  };
+
+  const closeToast = () => {
+    setToast((current) => ({
+      ...current,
+      show: false,
+    }));
+  };
+
 
   const handleToggleActive = async (teacher) => {
     const newStatus = !teacher.is_active;
@@ -47,13 +83,30 @@ const GuruPage = () => {
             : item
         )
       );
-    } catch (error) {
-      console.error("Gagal mengubah status guru:", error);
 
-      alert(
-        error.message ||
-          "Gagal mengubah status akun guru."
+      showToast({
+        type: "success",
+        title: newStatus
+          ? "Guru Diaktifkan"
+          : "Guru Dinonaktifkan",
+        message: newStatus
+          ? `Akun ${teacher.nama_lengkap} sekarang aktif.`
+          : `Akun ${teacher.nama_lengkap} sekarang nonaktif.`,
+      });
+
+    } catch (error) {
+      console.error(
+        "Gagal mengubah status guru:",
+        error
       );
+
+      showToast({
+        type: "error",
+        title: "Gagal Mengubah Status",
+        message:
+          error?.message ||
+          "Gagal mengubah status akun guru.",
+      });
     }
   };
 
@@ -79,6 +132,11 @@ const GuruPage = () => {
     }
   };
 
+  const handleEdit = (teacher) => {
+    setSelectedTeacher(teacher);
+    setShowEditModal(true);
+  };
+
   useEffect(() => {
     loadTeachers();
   }, []);
@@ -99,8 +157,104 @@ const GuruPage = () => {
     );
   });
 
+  const handleUpdate = async (form) => {
+    if (!selectedTeacher) return;
+
+    setSaving(true);
+
+    try {
+      const payload = {
+        username: form.username,
+        email: form.email,
+        nama_lengkap: form.nama_lengkap,
+        nip: form.nip,
+        jantina: form.jantina,
+        no_telefon: form.no_telefon,
+        alamat: form.alamat,
+      };
+
+      if (form.password?.trim()) {
+        payload.password = form.password;
+      }
+
+      const updatedTeacher = await api.patch(
+        `/teachers/${selectedTeacher.id}/`,
+        payload
+      );
+
+      setTeachers((current) =>
+        current.map((teacher) =>
+          teacher.id === selectedTeacher.id
+            ? updatedTeacher
+            : teacher
+        )
+      );
+
+      setShowEditModal(false);
+      setSelectedTeacher(null);
+
+      showToast({
+        type: "success",
+        title: "Guru Diperbarui",
+        message: `Data ${form.nama_lengkap} berhasil diperbarui.`,
+      });
+      
+    } catch (error) {
+      console.error("Gagal memperbarui data guru:", error);
+
+      showToast({
+        type: "error",
+        title: "Gagal Memperbarui Guru",
+        message: `Gagal memperbarui data ${form.nama_lengkap}.`,
+      });
+
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (teacher) => {
+    const confirmed = window.confirm(
+      `Hapus akun ${teacher.nama_lengkap}?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await api.delete(
+        `/teachers/${teacher.id}/`
+      );
+
+      setTeachers((current) =>
+        current.filter(
+          (item) => item.id !== teacher.id
+        )
+      );
+
+    } catch (error) {
+      console.error(error);
+
+      showToast({
+        type: "error",
+        title: "Gagal Menghapus Guru",
+        message: `Gagal menghapus guru ${teacher.nama_lengkap}.`,
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
+
+      <StatusToast
+        show={toast.show}
+        type={toast.type}
+        title={toast.title}
+        message={toast.message}
+        onClose={closeToast}
+      />
+
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
@@ -246,24 +400,43 @@ const GuruPage = () => {
                       {teacher.username}
                     </td>
 
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">
                       <button
                         type="button"
                         onClick={() => handleToggleActive(teacher)}
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
+                        className="group inline-flex items-center gap-2"
+                        title={
                           teacher.is_active
-                            ? "bg-green-500"
-                            : "bg-slate-300"
-                        }`}
+                            ? "Nonaktifkan akun"
+                            : "Aktifkan akun"
+                        }
                       >
                         <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
+                          className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition ${
                             teacher.is_active
-                              ? "bg-green-50 text-green-600"
-                              : "bg-red-50 text-red-600"
+                              ? "bg-green-500"
+                              : "bg-slate-300"
                           }`}
                         >
-                          {teacher.is_active ? "Aktif" : "Nonaktif"}
+                          <span
+                            className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                              teacher.is_active
+                                ? "translate-x-6"
+                                : "translate-x-1"
+                            }`}
+                          />
+                        </span>
+
+                        <span
+                          className={`text-sm font-medium ${
+                            teacher.is_active
+                              ? "text-green-600"
+                              : "text-slate-400"
+                          }`}
+                        >
+                          {teacher.is_active
+                            ? "Aktif"
+                            : "Nonaktif"}
                         </span>
                       </button>
                     </td>
@@ -272,6 +445,7 @@ const GuruPage = () => {
                       <div className="flex justify-end gap-2">
                         <button
                           type="button"
+                          onClick={() => handleEdit(teacher)}
                           className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-green-600"
                           title="Edit"
                         >
@@ -280,6 +454,7 @@ const GuruPage = () => {
 
                         <button
                           type="button"
+                          onClick={() => handleDelete(teacher)}
                           className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
                           title="Hapus"
                         >
@@ -296,9 +471,20 @@ const GuruPage = () => {
       </div>
 
       <TeacherFormModal
-      isOpen={showCreateModal}
-      onClose={() => setShowCreateModal(false)}
-      onSuccess={loadTeachers}
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={loadTeachers}
+      />
+
+      <EditGuruModal
+        isOpen={showEditModal}
+        teacher={selectedTeacher}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedTeacher(null);
+        }}
+        onSave={handleUpdate}
+        loading={saving}
       />
 
     </div>

@@ -1,10 +1,5 @@
-import { api } from "@/services/api";
-import { authService } from "@/services/auth";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import { getDashboardByRole } from "@/utils/authRedirect";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
   Eye,
   EyeOff,
@@ -13,18 +8,32 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
-
-
+import { api } from "@/services/api";
+import { useAuth } from "@/context/AuthContext";
+import { getDashboardByRole } from "@/utils/authRedirect";
 
 import MoraIcon from "@/assets/images/logo/mora-icon.png";
 import SchoolImage from "@/assets/images/school/man2-pontianak.webp";
 
 
-const LoginPage = async () => {
+const LoginPage = () => {
   const navigate = useNavigate();
 
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, login } = useAuth();
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+
+  // Jika user sudah login,
+  // langsung arahkan ke dashboard sesuai role
   if (isAuthenticated) {
     return (
       <Navigate
@@ -34,26 +43,6 @@ const LoginPage = async () => {
     );
   }
 
-  try {
-    const response = await api.login(username, password);
-
-    login(response);
-
-    navigate(getDashboardByRole(response.role), {
-      replace: true,
-    });
-  } catch (error) {
-    setError(error.message);
-  }
-  
-  const { login } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
-  const [form, setForm] = useState({
-    username: "",
-    password: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -63,6 +52,7 @@ const LoginPage = async () => {
       [name]: value,
     }));
   };
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -76,15 +66,20 @@ const LoginPage = async () => {
         form.password
       );
 
+      // Simpan data login
       login(data);
 
-      navigate(getDashboardByRole(data.role), {
-        replace: true,
-      });
+      // Redirect sesuai role
+      navigate(
+        getDashboardByRole(data.role),
+        {
+          replace: true,
+        }
+      );
 
     } catch (error) {
       setError(
-        error.message ||
+        error?.message ||
           "Login gagal. Silakan coba lagi."
       );
     } finally {

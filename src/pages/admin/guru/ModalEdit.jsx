@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Icon from "@/components/ui/Icon";
 
 const EditGuruModal = ({
+  isOpen,
   teacher,
   onClose,
   onSave,
@@ -33,7 +34,7 @@ const EditGuruModal = ({
     });
   }, [teacher]);
 
-  if (!teacher) {
+  if (!isOpen || !teacher) {
     return null;
   }
 

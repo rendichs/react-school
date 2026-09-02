@@ -13,7 +13,6 @@ import ModalEdit from "./ModalEdit";
 import ModalDelete from "./ModalDelete";
 import { api } from "@/services/api";
 import Icon from "@/components/ui/Icon"; 
-import StatusToast from "@/components/ui/StatusToast";
 import { useToast } from "@/context/ToastContext";
 
 const GuruPage = () => {
@@ -22,14 +21,10 @@ const GuruPage = () => {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
 
-  // const [showCreateModal, setShowCreateModal] = useState(false);
-
-  // const [showEditModal, setShowEditModal] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  // const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const { showToast } = useToast();
